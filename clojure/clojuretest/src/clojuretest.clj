@@ -48,6 +48,10 @@
   (concat (mk-period period amp vario) (lazy-seq (periodic period amp vario))))
 
 
+
+
+
+
 (def app (GraphMain.))
 
 (defn double-array2d [col2d]
@@ -76,4 +80,9 @@
 ;(rnd weeks "weeks")
 ;(rnd (mv-avg weeks 10) "weeks-av")
 
+(defn periodic2
+  [period-fn & period-fn-args]                   
+  (concat (apply period-fn period-fn-args) (lazy-seq (periodic2 period-fn period-fn-args))))
 
+; wouldn't work
+;(take 10 (periodic2 mk-period week-prd 1 1))
