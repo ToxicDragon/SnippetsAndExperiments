@@ -1,0 +1,3 @@
+#Sat Jul 16 22:59:39 CEST 2011
+cmdhistory=["(def db (make-connection \:example\\n { \:host \\"localhost\\" \:port 25017 } ))" "(with-mongo db\\n  (insert\! \:clojure\\n    {\:name \\"Clojure\\" \:tagline \\"The language from the future.\\"}))" "(make-connection \:example\\n    { \:host \\"localhost\\" \:port 25017 } )" "(insert\! \:clojure\\n       {\:name \\"Clojure\\" \:tagline \\"The language from the future.\\"})" "(with-mongo db (fetch-one \:clojure))" "(def db (make-connection \:ex))" "(with-mongo db\\n  (insert\! \:clojure\\n    {\:name \\"Clojure\\" \:tagline \\"The language from the future.\\"}))" "(with-mongo db (fetch-one \:clojure))"]
+eclipse.preferences.version=1
