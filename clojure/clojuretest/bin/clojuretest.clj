@@ -43,14 +43,9 @@
 (defn mk-period [period amp vario]
   (map #(- (* % amp) (* (Math/random) vario)) period))
 
-(defn periodic [period len amp vario] 
-  (loop [l len res '()]
-    (if (< l 1)
-      (take len res)
-      (recur (- l (count period))
-             (concat res (mk-period period amp vario))))))
-             
-      
+(defn periodic
+  [period amp vario]                   
+  (concat (mk-period period amp vario) (lazy-seq (periodic period amp vario))))
 
 
 (def app (GraphMain.))
@@ -73,27 +68,12 @@
 (def vs3 (even-ampl 50 200))
 (def vs4 (even-ampl2 50 200))
 
-(def week-prd '(0.8 0.82 0.79 0.85 0.78 0.69 0.65))
-(def weeks (periodic week-prd 140 20 2))
+(def week-prd '(0.8 0.82 0.79 0.85 0.78 0.75 0.74))
+(def weeks (take 49 (periodic week-prd 10 0.5)))
 
 ;(rnd vs4 "g1") 
 ;(rnd (mv-avg vs4 10) "g2") 
 ;(rnd weeks "weeks")
 ;(rnd (mv-avg weeks 10) "weeks-av")
-
-
-(defn periodic2 
-  ([period amp vario]
-  (periodic2 period amp vario '())) 
-  ([period amp vario res]
-    (let [new-res (concat res (mk-period period amp vario))]                       
-  (lazy-seq (periodic2 period amp vario new-res)))))
-
-(defn cc 
-  ([coll]
-  (cc coll '()))
-  ([coll res]
-  (lazy-seq (cc coll (lazy-cat res coll)))))
-
 
 
