@@ -29,7 +29,7 @@
   (partition win-size 1 values))
 
 (defn mv-avg [values window]
-  (cons (first values) (map mean-avg (slide values window))))
+  (concat (take window values) (map mean-avg (slide values window))))
 
 (defn growing-ampl [max] 
   (map #(- (* % (Math/random)) (* % (Math/random))) (range max))) 
@@ -75,10 +75,22 @@
 (def week-prd '(0.8 0.82 0.79 0.85 0.78 0.75 0.74))
 (def weeks (take 49 (periodic week-prd 10 0.5)))
 
+(def day-prd '(0.8 0.81 0.79 0.81 0.78 0.75 0.74 0.76 0.78 0.79 0.81 0.80 0.82 0.83 0.86 0.87 0.87 0.86 0.82 0.81 0.80 0.78 0.76 0.75))
+(def days (take 96 (periodic day-prd 10 0.2)))
+
 ;(rnd vs4 "g1") 
 ;(rnd (mv-avg vs4 10) "g2") 
 ;(rnd weeks "weeks")
 ;(rnd (mv-avg weeks 10) "weeks-av")
+
+;(rnd days "days")
+;(rnd (mv-avg days 4) "days-av")
+
+   
+(defn growing-ampl2 [max rnd-fac] 
+  (map #(+ % (* rnd-fac (Math/random))) (range max))) 
+
+(def v2 (growing-ampl2 200 20))
 
 (defn periodic2
   [period-fn & period-fn-args]                   
