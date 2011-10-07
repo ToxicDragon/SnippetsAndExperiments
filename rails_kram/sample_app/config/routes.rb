@@ -8,6 +8,8 @@ SampleApp::Application.routes.draw do
   get "pages/about"
   
   root :to => 'pages#home'
+  
+  resources :users
 
   match '/contact', :to => 'pages#contact'
   match '/about', :to => 'pages#about'
