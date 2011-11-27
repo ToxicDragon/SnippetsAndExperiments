@@ -2,6 +2,7 @@ package de.composition.functional;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
+import static de.composition.functional.CommonLists.head;
 import static de.composition.functional.CommonLists.tail;
 
 import java.util.List;
@@ -42,11 +43,11 @@ public class Partitioner {
 	}
 
 	private DateTime nextEndBoundary(List<? extends HistorizableFact<?>> facts) {
-		return min(facts.get(0).getEnd(), until);
+		return min(head(facts).getEnd(), until);
 	}
 
-	private DateTime min(DateTime end, DateTime from) {
-		return end.isAfter(from) ? from : end;
+	private DateTime min(DateTime date1, DateTime date2) {
+		return date1.isAfter(date2) ? date2 : date1;
 	}
 
 	private boolean createMorePartitions(DateTime nextEnd) {

@@ -4,10 +4,18 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
+import com.google.common.base.Preconditions;
+
 public class CommonLists {
+	
+	public static <T> T head(List<T> list) {
+		Preconditions.checkState(!list.isEmpty(), "Cannot get head of an empty list");
+		return list.get(0);
+	}
 
 	public static <T> List<T> tail(List<T> list) {
-		if (list.size() <= 1) {
+		Preconditions.checkState(!list.isEmpty(), "Cannot get tail of an empty list");
+		if (list.size() == 1) {
 			return newArrayList();
 		}
 		return list.subList(1, list.size());
