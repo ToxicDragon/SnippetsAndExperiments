@@ -29,7 +29,7 @@ public class PartitionerTest {
 
 	@Before
 	public void setUp() {
-		partitioner = new Partitioner(factProvider);
+		partitioner = new Partitioner(factProvider, FROM, UNTIL);
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class PartitionerTest {
 				getSortedByEndDate();
 		factProviderShouldReturn(facts);
 
-		List<TimePartition> partitions = partitioner.partition(FROM, UNTIL);
+		List<TimePartition> partitions = partitioner.partition();
 
 		assertEquals(4, partitions.size());
 		assertThat(partitions.get(0), both(
@@ -75,7 +75,7 @@ public class PartitionerTest {
 				getSortedByEndDate();
 		factProviderShouldReturn(facts);
 
-		List<TimePartition> partitions = partitioner.partition(FROM, UNTIL);
+		List<TimePartition> partitions = partitioner.partition();
 
 		assertEquals(4, partitions.size());
 		assertThat(partitions.get(0), both(

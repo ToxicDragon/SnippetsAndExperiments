@@ -6,55 +6,65 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import com.google.common.base.Predicate;
 
 public class Partitioner {
 
 	private final HistorizableFactProvider factProvider;
+	private final DateTime from;
+	private final DateTime until;
 
-	public Partitioner(HistorizableFactProvider factProvider) {
+	public Partitioner(HistorizableFactProvider factProvider, DateTime from, DateTime until) {
 		this.factProvider = factProvider;
+		this.from = from;
+		this.until = until;
 	}
 
-	public List<TimePartition> partition(DateTime from, DateTime until) {
+	public List<TimePartition> partition() {
 		List<TimePartition> partitions = newArrayList();
 		List<? extends HistorizableFact<?>> facts = factProvider.getFactsSortedByEndTime(from, until);
-		return createPartitions(partitions, facts, from, until);
+		return createPartitions(partitions, newArrayList(facts), from);
 	}
 
 	private List<TimePartition> createPartitions(List<TimePartition> partitions,
-			List<? extends HistorizableFact<?>> facts, DateTime from, DateTime until) {
+			List<? extends HistorizableFact<?>> facts, DateTime from) {
 		if (!facts.isEmpty()) {
-			HistorizableFact<?> fact = facts.remove(0);
-			TimePartition currentPartition = newPartition(from, min(fact.getEnd(), until));
-			currentPartition.addFact(fact);
-			currentPartition.addFacts(filter(facts, enclosing(currentPartition)));
-			partitions.add(currentPartition);
-			if (fact.getEnd().isBefore(until)) {
-				return createPartitions(partitions, facts, fact.getEnd(), until);
+			DateTime nextEnd = nextEndBoundary(facts);
+			partitions.add(createPartition(facts, from, nextEnd));
+			if (createMorePartitions(nextEnd)) {
+				facts.remove(0);
+				return createPartitions(partitions, facts, nextEnd);
 			}
 		}
 		return partitions;
 	}
 
-
-	private TimePartition newPartition(DateTime from, DateTime until) {
-		TimePartition currentPartition = new TimePartition();
-		currentPartition.setStart(from);
-		currentPartition.setEnd(until);
-		return currentPartition;
+	private DateTime nextEndBoundary(List<? extends HistorizableFact<?>> facts) {
+		return min(facts.get(0).getEnd(), until);
 	}
 
 	private DateTime min(DateTime end, DateTime from) {
 		return end.isAfter(from) ? from : end;
 	}
 
-	private Predicate<HistorizableFact<?>> enclosing(final TimePartition timePartition) {
+	private boolean createMorePartitions(DateTime nextEnd) {
+		return nextEnd.isBefore(until);
+	}
+
+	private TimePartition createPartition(List<? extends HistorizableFact<?>> facts, DateTime from, DateTime until) {
+		Interval nextInterval = new Interval(from, until);
+		Iterable<? extends HistorizableFact<?>> enclosingFacts = filter(facts, enclosing(nextInterval));
+		TimePartition partition = new TimePartition(nextInterval, enclosingFacts);
+		return partition;
+	}
+
+	private Predicate<HistorizableFact<?>> enclosing(final Interval nextInterval) {
 		return new Predicate<HistorizableFact<?>>() {
 
 			public boolean apply(HistorizableFact<?> input) {
-				return input.getInterval().contains(timePartition.getInterval());
+				return input.getInterval().contains(nextInterval);
 			}
 		};
 	}
