@@ -56,8 +56,7 @@ public class Partitioner {
 	private TimePartition createPartition(List<? extends HistorizableFact<?>> facts, DateTime from, DateTime until) {
 		Interval nextInterval = new Interval(from, until);
 		Iterable<? extends HistorizableFact<?>> enclosingFacts = filter(facts, enclosing(nextInterval));
-		TimePartition partition = new TimePartition(nextInterval, enclosingFacts);
-		return partition;
+		return new TimePartition(nextInterval, enclosingFacts);
 	}
 
 	private Predicate<HistorizableFact<?>> enclosing(final Interval nextInterval) {
