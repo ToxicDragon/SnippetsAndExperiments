@@ -1,4 +1,4 @@
-package de.composition.functional;
+package de.composition.functional.historizable;
 
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
@@ -12,6 +12,12 @@ import org.joda.time.Interval;
 
 import com.google.common.base.Predicate;
 
+/**
+ * Recursively partitions {@link HistorizableFact}s.
+ * 
+ * Fails with a {@link StackOverflowError} on big lists since java does no tail
+ * call optimization.
+ */
 public class Partitioner {
 
 	private final HistorizableFactProvider factProvider;
@@ -27,23 +33,23 @@ public class Partitioner {
 	public List<TimePartition> partition() {
 		List<TimePartition> partitions = newArrayList();
 		List<? extends HistorizableFact<?>> facts = factProvider.getFactsSortedByEndTime(from, until);
-		return createPartitions(partitions, facts, from);
+		return createPartitionsRecursively(partitions, facts, from);
 	}
 
-	private List<TimePartition> createPartitions(List<TimePartition> partitions,
+	private List<TimePartition> createPartitionsRecursively(List<TimePartition> partitions,
 			List<? extends HistorizableFact<?>> facts, DateTime from) {
 		if (!facts.isEmpty()) {
 			DateTime nextEnd = nextEndBoundary(facts);
 			partitions.add(createPartition(facts, from, nextEnd));
 			if (createMorePartitions(nextEnd)) {
-				return createPartitions(partitions, tail(facts), nextEnd);
+				return createPartitionsRecursively(partitions, tail(facts), nextEnd);
 			}
 		}
 		return partitions;
 	}
 
 	private DateTime nextEndBoundary(List<? extends HistorizableFact<?>> facts) {
-		return min(head(facts).getEnd(), until);
+		return min(head(facts).getInterval().getEnd(), until);
 	}
 
 	private DateTime min(DateTime date1, DateTime date2) {

@@ -1,4 +1,4 @@
-package de.composition.functional;
+package de.composition.functional.historizable;
 
 import static de.composition.functional.Times.utcDateTime;
 import static org.junit.Assert.assertEquals;
@@ -11,10 +11,16 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import com.google.common.base.Stopwatch;
+
+import de.composition.functional.PreCastArgumentMatcher;
+import de.composition.functional.Times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PartitionerTest {
@@ -63,7 +69,7 @@ public class PartitionerTest {
 				and(hasAFact("A2")).
 				and(hasBFact("B3")));
 	}
-	
+
 	@Test
 	public void partition_factBoundariesOverlapRequestedInterval() throws Exception {
 		List<HistorizableFact<?>> facts = FactBuilder.facts().
@@ -94,6 +100,23 @@ public class PartitionerTest {
 				hasBoundaries("2011-11-22 16:00", "2011-11-23 00:00")).
 				and(hasAFact("A2")).
 				and(hasBFact("B3")));
+	}
+
+	@Ignore("might blow the stack size")
+	@Test
+	public void partition_performance() throws Exception {
+		List<HistorizableFact<?>> facts = FactBuilder.facts().
+				aFacts("2011-01-01 00:00", "2011-12-21 00:00", 15, "A1").
+				bFacts("2011-01-01 00:00", "2011-12-31 00:00", 30, "B1").
+				getSortedByEndDate();
+		when(
+				factProvider.getFactsSortedByEndTime(Times.utcDateTime("2011-01-01 00:00"),
+						Times.utcDateTime("2011-12-21 00:00"))).thenReturn(facts);
+		partitioner = new Partitioner(factProvider, Times.utcDateTime("2011-01-01 00:00"),
+				Times.utcDateTime("2011-12-21 00:00"));
+		Stopwatch stopwatch = new Stopwatch().start();
+		List<TimePartition> partitions = partitioner.partition();
+		System.out.println(stopwatch.elapsedMillis());
 	}
 
 	private void factProviderShouldReturn(List<HistorizableFact<?>> facts) {

@@ -1,4 +1,4 @@
-package de.composition.functional;
+package de.composition.functional.historizable;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;

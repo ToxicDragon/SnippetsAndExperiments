@@ -1,4 +1,4 @@
-package de.composition.functional;
+package de.composition.functional.historizable;
 
 import java.util.List;
 
