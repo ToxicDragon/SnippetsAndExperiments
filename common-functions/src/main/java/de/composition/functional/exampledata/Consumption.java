@@ -9,6 +9,8 @@ public class Consumption {
 	private BigDecimal amount;
 
 	private BigDecimal price;
+	private BigDecimal taxA;
+	private BigDecimal taxB;
 
 	private Interval interval;
 
@@ -35,5 +37,29 @@ public class Consumption {
 	public void setInterval(Interval interval) {
 		this.interval = interval;
 	}
+
+	public BigDecimal getTaxA() {
+		return taxA;
+	}
+
+	public void setTaxA(BigDecimal taxA) {
+		this.taxA = taxA;
+	}
+
+	public BigDecimal getTaxB() {
+		return taxB;
+	}
+
+	public void setTaxB(BigDecimal taxB) {
+		this.taxB = taxB;
+	}
+
+	@Override
+	public String toString() {
+		return "Consumption [interval=" + interval + ", amount=" + amount + ", price=" + price + ", taxA=" + taxA
+				+ ", taxB=" + taxB + "]";
+	}
+	
+	
 
 }

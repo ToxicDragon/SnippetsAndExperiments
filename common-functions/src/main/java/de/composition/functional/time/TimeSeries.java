@@ -13,6 +13,8 @@ import org.joda.time.format.DateTimeFormatter;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
+import de.composition.functional.Times;
+
 public class TimeSeries {
 
 	public static class TimestampsBuilder {
@@ -39,7 +41,7 @@ public class TimeSeries {
 		}
 
 		public List<DateTime> get() {
-			return timestamps(DateTime.parse(start, FORMATTER), DateTime.parse(until, FORMATTER), duration);
+			return timestamps(Times.utcDateTime(start), Times.utcDateTime(until), duration);
 		}
 	}
 
@@ -59,9 +61,11 @@ public class TimeSeries {
 
 		return timestamps;
 	}
-	
+
 	public static <T> List<T> timeSeries(List<DateTime> timestamps, Function<DateTime, T> generator) {
 		return transform(timestamps, generator);
 	}
+
+	
 
 }

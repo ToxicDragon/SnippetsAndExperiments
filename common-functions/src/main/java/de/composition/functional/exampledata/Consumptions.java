@@ -1,39 +1,30 @@
 package de.composition.functional.exampledata;
 
-import java.math.BigDecimal;
+import static com.google.common.collect.Lists.newArrayList;
 
-import org.junit.Test;
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.joda.time.Interval;
 
 import com.google.common.base.Function;
 
 public class Consumptions {
 
-	@Test
-	public void testName() throws Exception {
-		Consumption c = new Consumption();
-		c.setAmount(BigDecimal.TEN);
-
-		Function<Consumption, Consumption> cf = fMap(basicPrice());
-
+	public static List<Consumption> apply(List<Consumption> consumptions,
+			Function<Interval, Function<BigDecimal, List<BigDecimal>>> priceCalculations) {
+		List<Consumption> transformed = newArrayList();
+		for (Consumption consumption : consumptions) {
+			List<BigDecimal> prices = priceCalculations.apply(consumption.getInterval()).apply(consumption.getAmount());
+			Consumption transformedConsumption = new Consumption();
+			transformedConsumption.setInterval(consumption.getInterval());
+			transformedConsumption.setAmount(consumption.getAmount());
+			transformedConsumption.setPrice(prices.get(0));
+			transformedConsumption.setTaxA(prices.get(1));
+			transformedConsumption.setTaxB(prices.get(2));
+			transformed.add(transformedConsumption);
+		}
+		return transformed;
 	}
 
-	private Function<Consumption, Consumption> fMap(final Function<BigDecimal, BigDecimal> basicPrice) {
-		return new Function<Consumption, Consumption>() {
-			
-			public Consumption apply(Consumption input) {
-				input.setPrice(basicPrice.apply(input.getAmount()));
-				return input;
-			}
-		};
-	}
-
-	private Function<BigDecimal, BigDecimal> basicPrice() {
-		return new Function<BigDecimal, BigDecimal>() {
-
-			public BigDecimal apply(BigDecimal input) {
-				return input.multiply(BigDecimal.valueOf(2));
-			}
-
-		};
-	}
 }

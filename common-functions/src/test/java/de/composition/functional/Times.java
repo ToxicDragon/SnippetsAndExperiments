@@ -7,14 +7,15 @@ import org.joda.time.format.DateTimeFormatter;
 
 public class Times {
 
-	public static DateTime utcDateTime(String yyyyMMddmmhhss) {
+	public static DateTime utcDateTime(String yyyyMMddHHmm) {
 		DateTimeFormatter fmt = DateTimeFormat
-				.forPattern("yyyy-MM-dd mm:HH");
-		return fmt.parseDateTime(yyyyMMddmmhhss);
+				.forPattern("yyyy-MM-dd HH:mm");
+		return fmt.parseDateTime(yyyyMMddHHmm);
 	}
 	
 	public static  Interval interval(String from, String until) {
 		return new Interval(utcDateTime(from), utcDateTime(until));
 	}
+
 
 }
