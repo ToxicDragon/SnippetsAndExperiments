@@ -1,5 +1,7 @@
 package de.composition.functional;
 
+import static de.composition.functional.Functions.foldLeft;
+
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -28,6 +30,15 @@ public class ExampleFunctions {
 
 		};
 		return Functions.curry(reverse);
+	}
+	
+	public static Function<List<Integer>, Double> average() {
+		return new Function<List<Integer>, Double>() {
+
+			public Double apply(List<Integer> input) {
+				return  (double) foldLeft(input, add(), 0) / input.size();
+			}
+		};
 	}
 
 	public static Function<Integer, Function<Integer, Integer>> count() {

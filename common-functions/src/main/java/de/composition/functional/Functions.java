@@ -9,6 +9,14 @@ import com.google.common.collect.Lists;
 
 public class Functions {
 
+	/**
+	 * Non-recursive foldLeft.
+	 * 
+	 * @param list
+	 * @param fct
+	 * @param initial
+	 * @return
+	 */
 	public static <A, B> B foldLeft(List<A> list, Function<A, Function<B, B>> fct, B initial) {
 		B b = initial;
 		for (A a : list) {
@@ -18,6 +26,12 @@ public class Functions {
 		return b;
 	}
 
+	/**
+	 * Curries a {@link Function2} to become an arity-1 guava {@link Function}.
+	 * 
+	 * @param function
+	 * @return
+	 */
 	public static <A, B, C> Function<A, Function<B, C>> curry(final Function2<A, B, C> function) {
 		return new Function<A, Function<B, C>>() {
 
@@ -32,7 +46,8 @@ public class Functions {
 		};
 	}
 
-	public static <A, B, C> Function<A, Function<B, List<C>>> flatten(final Function<A, List<Function<B, C>>> multiFunction) {
+	public static <A, B, C> Function<A, Function<B, List<C>>> flatten(
+			final Function<A, List<Function<B, C>>> multiFunction) {
 		return new Function<A, Function<B, List<C>>>() {
 
 			public Function<B, List<C>> apply(final A a) {
@@ -52,6 +67,13 @@ public class Functions {
 		};
 	}
 
+	/**
+	 * Returns a {@link Function} that applies a List of {@link Function}s
+	 * sequentially.
+	 * 
+	 * @param functions
+	 * @return
+	 */
 	public static <A, B> Function<A, List<B>> sequence(final Function<A, B>... functions) {
 		return new Function<A, List<B>>() {
 
@@ -67,6 +89,7 @@ public class Functions {
 
 	/**
 	 * what is the functional term for this? bind or apply or what?
+	 * 
 	 */
 	public static <A, C, B> Function<A, C> weaveIn(final Function<A, Function<B, C>> outer, final Function<A, B> inner) {
 		return new Function<A, C>() {
