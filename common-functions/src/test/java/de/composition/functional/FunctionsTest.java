@@ -42,6 +42,18 @@ public class FunctionsTest {
 	}
 
 	@Test
+	public void foldLeft_composedAbstractFunctions() throws Exception {
+		AbstractFunction<Integer, Integer> mult2 = AbstractFunction.from(mult(2));
+		assertEquals(newArrayList(6, 4, 2),
+				foldLeft(newArrayList(1, 2, 3), mult2.andThen(insertAsFirstElem()), emptyList()));
+
+		AbstractFunction<Integer, Function<List<Integer>, List<Integer>>> insertAsFirstElem = AbstractFunction
+				.from(insertAsFirstElem());
+		assertEquals(newArrayList(6, 4, 2),
+				foldLeft(newArrayList(1, 2, 3), insertAsFirstElem.compose(mult(2)), emptyList()));
+	}
+
+	@Test
 	public void foldLeft_sum() throws Exception {
 		assertEquals(Integer.valueOf(21), foldLeft(newArrayList(1, 2, 3, 4, 5, 6), add(), 0));
 	}
@@ -97,6 +109,11 @@ public class FunctionsTest {
 				idealWindowFunction(3, invert(sumCompare())), initial);
 
 		assertEquals(newArrayList(4, 1, 3), biggest.getReferenceWindow());
+	}
+
+	@Test
+	public void map() throws Exception {
+		assertEquals(newArrayList(2, 4, 6, 8, 10, 12), Functions.map(newArrayList(1, 2, 3, 4, 5, 6), mult(2)));
 	}
 
 	private Function<List<Integer>, Comparable<List<Integer>>> sumCompare() {

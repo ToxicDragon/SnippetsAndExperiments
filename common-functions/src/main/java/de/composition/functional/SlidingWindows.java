@@ -46,7 +46,19 @@ public class SlidingWindows {
 			}
 		};
 	}
-	
+
+	/**
+	 * Returns a {@link Function} that, applied in a
+	 * {@link Functions#foldLeft(List, Function, Object)}, determines the ideal
+	 * {@link Window} in a {@link List} using a comparison criteria provided by
+	 * windowRating. If the comparison of the elements of window A to those of
+	 * window B yields a value < 0 window A will be considered the preferable
+	 * one.
+	 * 
+	 * @param size
+	 * @param windowRating
+	 * @return
+	 */
 	public static <T> Function<T, Function<Window<T>, Window<T>>> idealWindowFunction(final int size,
 			final Function<List<T>, Comparable<List<T>>> windowRating) {
 		return Functions.curry(new Function2<T, Window<T>, Window<T>>() {
@@ -63,6 +75,7 @@ public class SlidingWindows {
 		});
 	}
 
+	
 	public static <T> Function<T, Function<List<Window<T>>, List<Window<T>>>> windows(final int size) {
 		return Functions.curry(new Function2<T, List<Window<T>>, List<Window<T>>>() {
 

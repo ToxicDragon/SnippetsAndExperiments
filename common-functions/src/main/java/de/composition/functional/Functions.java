@@ -1,13 +1,44 @@
 package de.composition.functional;
 
+import static com.google.common.base.Functions.compose;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
+/**
+ * Functions to experiment with and demonstrate functional programming style in
+ * java. Laziness is not addressed, neither are performance issues. Using the
+ * {@link List} collection is considered sufficient here. For real use the data
+ * types should be more general.
+ */
 public class Functions {
+
+	/**
+	 * Function mapping implemented with
+	 * {@link #foldLeft(List, Function, Object)}
+	 * 
+	 * @param list
+	 * @param function
+	 * @return
+	 */
+	public static <A, B> List<B> map(List<A> list, Function<A, B> function) {
+		return foldLeft(list, compose(Functions.<B> addElement(), function), Lists.<B> newArrayList());
+	}
+
+	private static <A> Function<A, Function<List<A>, List<A>>> addElement() {
+		return curry(new Function2<A, List<A>, List<A>>() {
+
+			public List<A> apply(A a, List<A> b) {
+				ArrayList<A> list = newArrayList(b);
+				list.add(a);
+				return list;
+			}
+		});
+	}
 
 	/**
 	 * Non-recursive foldLeft.
