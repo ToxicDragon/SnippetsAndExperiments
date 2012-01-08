@@ -3,7 +3,6 @@ package de.composition.functional;
 import static com.google.common.base.Functions.compose;
 import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -19,21 +18,21 @@ public class Functions {
 
 	/**
 	 * Function mapping implemented with
-	 * {@link #foldLeft(List, Function, Object)}
+	 * {@link #foldLeft(Iterable, Function, Object)}
 	 * 
-	 * @param list
+	 * @param iterable
 	 * @param function
 	 * @return
 	 */
-	public static <A, B> List<B> map(List<A> list, Function<A, B> function) {
-		return foldLeft(list, compose(Functions.<B> addElement(), function), Lists.<B> newArrayList());
+	public static <A, B> Iterable<B> map(Iterable<A> iterable, Function<A, B> function) {
+		return foldLeft(iterable, compose(Functions.<B> addElement(), function), Lists.<B> newArrayList());
 	}
 
-	private static <A> Function<A, Function<List<A>, List<A>>> addElement() {
-		return curry(new Function2<A, List<A>, List<A>>() {
+	private static <A> Function<A, Function<Iterable<A>, Iterable<A>>> addElement() {
+		return curry(new Function2<A, Iterable<A>, Iterable<A>>() {
 
-			public List<A> apply(A a, List<A> b) {
-				ArrayList<A> list = newArrayList(b);
+			public Iterable<A> apply(A a, Iterable<A> b) {
+				List<A> list = newArrayList(b);
 				list.add(a);
 				return list;
 			}
@@ -48,7 +47,7 @@ public class Functions {
 	 * @param initial
 	 * @return
 	 */
-	public static <A, B> B foldLeft(List<A> list, Function<A, Function<B, B>> fct, B initial) {
+	public static <A, B> B foldLeft(Iterable<A> list, Function<A, Function<B, B>> fct, B initial) {
 		B b = initial;
 		for (A a : list) {
 			b = fct.apply(a).apply(b);
