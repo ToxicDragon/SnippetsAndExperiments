@@ -118,8 +118,14 @@ public class Functions {
 	}
 
 	/**
+	 * Returns a {@link Function} that applies its argument to outer and inner
+	 * function. The result of inner is then applied to the result of outer.
+	 * <p>
 	 * what is the functional term for this? bind or apply or what?
 	 * 
+	 * @param outer
+	 * @param inner
+	 * @return
 	 */
 	public static <A, C, B> Function<A, C> weaveIn(final Function<A, Function<B, C>> outer, final Function<A, B> inner) {
 		return new Function<A, C>() {

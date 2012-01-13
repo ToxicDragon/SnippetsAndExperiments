@@ -1,6 +1,5 @@
 package de.composition.functional.time;
 
-import static com.google.common.base.Functions.compose;
 import static com.google.common.collect.Lists.newArrayList;
 import static de.composition.functional.ExampleFunctions.mult;
 import static de.composition.functional.Functions.sequence;
@@ -19,8 +18,8 @@ import org.junit.Test;
 
 import com.google.common.base.Function;
 
-import de.composition.functional.Function2;
-import de.composition.functional.Functions;
+import de.composition.functional.AbstractFunction;
+import de.composition.functional.AbstractFunction2;
 import de.composition.functional.PreCastArgumentMatcher;
 import de.composition.functional.Times;
 import de.composition.functional.exampledata.DatedElements;
@@ -35,8 +34,8 @@ public class TimeSeriesTest {
 		assertEquals(newArrayList(11, 12, 13, 14, 15), series);
 	}
 
-	private Function<DateTime, Integer> hour() {
-		return new Function<DateTime, Integer>() {
+	private AbstractFunction<DateTime, Integer> hour() {
+		return new AbstractFunction<DateTime, Integer>() {
 
 			public Integer apply(DateTime input) {
 				return input.getHourOfDay();
@@ -49,8 +48,8 @@ public class TimeSeriesTest {
 	public void monadicComposition() throws Exception {
 		List<DateTime> dates = timestamps().from("2011-12-01 11:00").until("2011-12-01 13:01")
 				.withInterval(Duration.standardHours(1)).get();
-		Function<DateTime, DatedElements<Integer>> weavedIn = Functions.weaveIn(datedElement(),
-				sequence(hour(), compose(mult(2), hour())));
+		Function<DateTime, DatedElements<Integer>> weavedIn = datedElement().weaveIn(
+				sequence(hour(), hour().andThen(mult(2))));
 
 		List<DatedElements<Integer>> series = TimeSeries.timeSeries(dates, weavedIn);
 
@@ -60,15 +59,13 @@ public class TimeSeriesTest {
 		assertThat(series.get(2), both(hasDateTime("2011-12-01 13:00")).and(hasElements(13, 26)));
 	}
 
-	private Function<DateTime, Function<List<Integer>, DatedElements<Integer>>> datedElement() {
-		Function2<DateTime, List<Integer>, DatedElements<Integer>> datedElementsGenerator = new Function2<DateTime, List<Integer>, DatedElements<Integer>>() {
+	private AbstractFunction2<DateTime, List<Integer>, DatedElements<Integer>> datedElement() {
+		return new AbstractFunction2<DateTime, List<Integer>, DatedElements<Integer>>() {
 
 			public DatedElements<Integer> apply(DateTime dateTime, List<Integer> elements) {
 				return new DatedElements<Integer>(dateTime, elements);
 			}
 		};
-
-		return Functions.curry(datedElementsGenerator);
 	}
 
 	private Matcher<DatedElements<Integer>> hasElements(final Integer... is) {
