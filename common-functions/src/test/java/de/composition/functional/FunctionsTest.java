@@ -22,7 +22,6 @@ import org.junit.Test;
 
 import com.google.common.base.Equivalence;
 import com.google.common.base.Function;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 
 import de.composition.functional.SlidingWindows.Window;
@@ -137,30 +136,6 @@ public class FunctionsTest {
 	public void weaveIn_onAbstractFunction2() throws Exception {
 		Function<Integer, Integer> fct = add().weaveIn(mult(2));
 		assertEquals(6, fct.apply(2).intValue());
-	}
-
-	@Test
-	public void cachedFunction() throws Exception {
-		List<Integer> range = Series.range(modulo(10), 1, 100000000);
-		Stopwatch stopwatch = new Stopwatch();
-		stopwatch.start();
-		List<Integer> list = newArrayList(Lists.transform(range, mult(2)));
-		System.out.println(stopwatch.stop().elapsedMillis());
-		stopwatch.reset().start();
-		list = newArrayList(Lists.transform(range, mult(2)));
-		System.out.println(stopwatch.stop().elapsedMillis());
-		stopwatch.reset().start();
-		list = newArrayList(Lists.transform(range, mult(2).asCache()));
-		System.out.println(stopwatch.stop().elapsedMillis());
-	}
-
-	private Function<Integer, Integer> modulo(final int mod) {
-		return new Function<Integer, Integer>() {
-
-			public Integer apply(Integer input) {
-				return input % mod;
-			}
-		};
 	}
 
 	private ArrayList<Integer> emptyList() {
