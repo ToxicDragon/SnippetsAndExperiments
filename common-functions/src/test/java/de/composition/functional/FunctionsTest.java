@@ -10,6 +10,8 @@ import static de.composition.functional.ExampleFunctions.average;
 import static de.composition.functional.ExampleFunctions.count;
 import static de.composition.functional.ExampleFunctions.insertAsFirstElem;
 import static de.composition.functional.ExampleFunctions.mult;
+import static de.composition.functional.Functions.asArrayList;
+import static de.composition.functional.Functions.curriedMap;
 import static de.composition.functional.Functions.foldLeft;
 import static de.composition.functional.SlidingWindows.idealWindowFunction;
 import static org.junit.Assert.assertEquals;
@@ -136,6 +138,40 @@ public class FunctionsTest {
 	public void weaveIn_onAbstractFunction2() throws Exception {
 		Function<Integer, Integer> fct = add().weaveIn(mult(2));
 		assertEquals(6, fct.apply(2).intValue());
+	}
+
+	@Test
+	public void windows() throws Exception {
+		ArrayList<Integer> list = newArrayList(1, 2, 3, 4, 5, 6, 7, 8);
+
+		List<List<Integer>> empty = newArrayList();
+		List<List<Integer>> result = foldLeft(list, win(3), empty);
+		System.out.println(result);
+	}
+
+	@Test
+	public void curriedMap_fixesAFunctionToTheMapOperator() throws Exception {
+		Function<Iterable<Integer>, Iterable<Integer>> add2Mapping = curriedMap(add(2));
+		assertEquals(newArrayList(2, 3, 4, 5), newArrayList(add2Mapping.apply(newArrayList(0, 1, 2, 3))));
+	}
+
+	@Test
+	public void curriedMap_whichReturnsAnArrayList() throws Exception {
+		Function<Iterable<Integer>, List<Integer>> add2Mapping = curriedMap(add(2), asArrayList());
+		assertEquals(newArrayList(2, 3, 4, 5), add2Mapping.apply(newArrayList(0, 1, 2, 3)));
+	}
+
+	private Function<Integer, Function<List<List<Integer>>, List<List<Integer>>>> win(final int length) {
+		return new AbstractFunction2<Integer, List<List<Integer>>, List<List<Integer>>>() {
+
+			public List<List<Integer>> apply(Integer a, List<List<Integer>> b) {
+				b.add(newArrayList(a));
+				for (int i = b.size() - 2; i >= (b.size() - length) && i >= 0; i--) {
+					b.get(i).add(a);
+				}
+				return b;
+			}
+		};
 	}
 
 	private ArrayList<Integer> emptyList() {

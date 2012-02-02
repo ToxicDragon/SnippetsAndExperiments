@@ -3,9 +3,11 @@ package de.composition.functional;
 import static com.google.common.base.Functions.compose;
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
@@ -26,6 +28,50 @@ public class Functions {
 	 */
 	public static <A, B> Iterable<B> map(Iterable<A> iterable, Function<A, B> function) {
 		return foldLeft(iterable, compose(Functions.<B> addElement(), function), Lists.<B> newArrayList());
+	}
+
+	/**
+	 * A curried mapping function.
+	 * 
+	 * @param function
+	 * @return
+	 */
+	public static <A, B> Function<Iterable<A>, Iterable<B>> curriedMap(final Function<A, B> function) {
+		return new Function<Iterable<A>, Iterable<B>>() {
+
+			public Iterable<B> apply(Iterable<A> input) {
+				return Iterables.transform(input, function);
+			}
+		};
+	}
+
+	/**
+	 * A curried mapping function which converts the result to a desired {@link Iterable} type.
+	 * 
+	 * @param function
+	 * @return
+	 */
+	public static <A, B, IB extends Iterable<B>> Function<Iterable<A>, IB> curriedMap(final Function<A, B> function,
+			final Function<Iterable<B>, IB> iterableConverter) {
+		return new Function<Iterable<A>, IB>() {
+
+			public IB apply(Iterable<A> input) {
+				return iterableConverter.apply(Iterables.transform(input, function));
+			}
+		};
+	}
+	
+	/**
+	 * Converts an {@link Iterable} into an {@link ArrayList}
+	 * @return
+	 */
+	public static Function<Iterable<Integer>, List<Integer>> asArrayList() {
+		return new Function<Iterable<Integer>, List<Integer>>() {
+
+			public List<Integer> apply(Iterable<Integer> input) {
+				return newArrayList(input);
+			}
+		};
 	}
 
 	private static <A> Function<A, Function<Iterable<A>, Iterable<A>>> addElement() {
@@ -54,6 +100,16 @@ public class Functions {
 		}
 
 		return b;
+	}
+
+	/**
+	 * Curries a {@link Function2} with an environment value.
+	 * 
+	 * @param function
+	 * @return
+	 */
+	public static <A, B, C> Function<B, C> curry(final Function2<A, B, C> function, A value) {
+		return curry(function).apply(value);
 	}
 
 	/**
