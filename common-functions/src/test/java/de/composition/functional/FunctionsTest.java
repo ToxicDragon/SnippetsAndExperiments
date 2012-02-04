@@ -4,16 +4,16 @@ import static com.google.common.base.Functions.compose;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static de.composition.functional.Comparison.invert;
-import static de.composition.functional.EquivalenceMatchers.matchesEquivalently;
-import static de.composition.functional.ExampleFunctions.add;
-import static de.composition.functional.ExampleFunctions.average;
-import static de.composition.functional.ExampleFunctions.count;
-import static de.composition.functional.ExampleFunctions.insertAsFirstElem;
-import static de.composition.functional.ExampleFunctions.mult;
 import static de.composition.functional.Functions.asArrayList;
 import static de.composition.functional.Functions.curriedMap;
 import static de.composition.functional.Functions.foldLeft;
-import static de.composition.functional.SlidingWindows.idealWindowFunction;
+import static de.composition.functional.examples.ExampleFunctions.add;
+import static de.composition.functional.examples.ExampleFunctions.average;
+import static de.composition.functional.examples.ExampleFunctions.count;
+import static de.composition.functional.examples.ExampleFunctions.insertAsFirstElem;
+import static de.composition.functional.examples.ExampleFunctions.mult;
+import static de.composition.functional.series.SlidingWindows.idealWindowFunction;
+import static de.composition.functional.testing.EquivalenceMatchers.matchesEquivalently;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -26,7 +26,8 @@ import com.google.common.base.Equivalence;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import de.composition.functional.SlidingWindows.Window;
+import de.composition.functional.series.SlidingWindows;
+import de.composition.functional.series.SlidingWindows.Window;
 
 public class FunctionsTest {
 

@@ -10,6 +10,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+
 /**
  * Functions to experiment with and demonstrate functional programming style in
  * java. Laziness is not addressed, neither are performance issues. Using the

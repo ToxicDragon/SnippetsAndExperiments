@@ -6,8 +6,8 @@ import com.google.common.base.Function;
  * Implementation skeleton for {@link Function} to make function composition a
  * bit more readable.
  * 
- * @param <A>
- * @param <B>
+ * @param <A> input type
+ * @param <B> return type
  */
 public abstract class AbstractFunction<A, B> implements Function<A, B> {
 

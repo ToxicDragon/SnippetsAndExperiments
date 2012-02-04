@@ -4,13 +4,14 @@ import static de.composition.functional.Functions.curry;
 
 import com.google.common.base.Function;
 
+
 /**
  * Skeleton for arity 2 {@link Function2} which also represents the curried
  * version of itself.
  * 
- * @param <A>
- * @param <B>
- * @param <C>
+ * @param <A> first input type
+ * @param <B> second input type
+ * @param <C> return type
  */
 public abstract class AbstractFunction2<A, B, C> extends AbstractFunction<A, Function<B, C>> implements
 		Function2<A, B, C> {
