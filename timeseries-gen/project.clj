@@ -3,5 +3,6 @@
   :main timeseries.gen.core
   :keep-non-project-classes true
   :dependencies [[org.clojure/clojure "1.3.0"]
-                  [joda-time/joda-time "2.0"]
-                  [clj-time "0.3.3"]])
+                 [org.clojure/clojure-contrib "1.2.0"]
+                 [joda-time/joda-time "2.0"]
+                 [clj-time "0.3.3"]])
