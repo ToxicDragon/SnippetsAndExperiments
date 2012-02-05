@@ -8,17 +8,19 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.base.Joiner;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 import de.composition.functional.AbstractFunction;
 import de.composition.functional.datastructures.CommonLists;
@@ -27,51 +29,53 @@ import de.composition.functional.resources.LineReaderIterableTest;
 
 public class RethinkingConsumptions {
 
-	private static final URL TIMESERIES_CSV = LineReaderIterableTest.class.getResource("/timeseries.csv");
-	private final int HEADER_LINE_TO_SKIP = 1;
+	private LineReaderIterable dataSource;
+
+	@Before
+	public void setUp() {
+		final URL timeseriesCsv = LineReaderIterableTest.class.getResource("/timeseries.csv");
+		final int linesToSkip = 1;
+		dataSource = new LineReaderIterable(timeseriesCsv, linesToSkip);
+	}
+
+	@After
+	public void tearDown() throws IOException {
+		dataSource.close();
+	}
 
 	@Test
 	public void loadLinesFromCSV_asStrings() throws Exception {
-		for (String line : newDataSource()) {
-			System.out.println(line);
-		}
+		printIterable(dataSource);
 	}
 
 	@Test
 	public void loadLinesFromCSV_asListsOfStrings() throws Exception {
-		Iterable<List<String>> splitLists = Iterables.transform(newDataSource(), splitCSV(','));
-		for (Iterable<String> line : splitLists) {
-			System.out.println("[" + Joiner.on(", ").join(line) + "]");
-		}
+		Iterable<List<String>> splitLists = transform(dataSource, splitCSV(','));
+
+		printIterable(splitLists);
 	}
 
 	@Test
 	public void loadLinesFromCSV_filterMissings() throws Exception {
-		Iterable<List<String>> splitLines = transform(newDataSource(), splitCSV(','));
+		Iterable<List<String>> splitLines = transform(dataSource, splitCSV(','));
 		Iterable<List<String>> withoutMissing = filter(splitLines, skipMissing());
 
-		for (Iterable<String> line : withoutMissing) {
-			System.out.println("[" + Joiner.on(", ").join(line) + "]");
-		}
+		printIterable(withoutMissing);
 	}
 
 	@Test
 	public void loadLinesFromCSV_parseAsMeasuredDateObjects() throws Exception {
-		Iterable<MeasuredData> parsedCsv = transform(newDataSource(), splitCSV(',').andThen(parseIntoMeasuredData()));
-		for (MeasuredData measuredData : parsedCsv) {
-			System.out.println(measuredData);
-		}
+		Iterable<MeasuredData> parsedCsv = transform(dataSource, splitCSV(',').andThen(parseIntoMeasuredData()));
+
+		printIterable(parsedCsv);
 	}
 
-	private LineReaderIterable newDataSource() {
-		return new LineReaderIterable(TIMESERIES_CSV, HEADER_LINE_TO_SKIP);
-	}
-
-	private AbstractFunction<String, List<String>> splitCSV(char separator) {
+	private AbstractFunction<String, List<String>> splitCSV(final char separator) {
 		return new AbstractFunction<String, List<String>>() {
 
 			public List<String> apply(String input) {
-				return newArrayList(Splitter.on(',').trimResults().split(input));
+				// System.out.println("applying split on " + input);
+				return newArrayList(Splitter.on(separator).trimResults().split(input));
 			}
 		};
 	}
@@ -80,7 +84,7 @@ public class RethinkingConsumptions {
 		return compose(not(equalTo("MISSING")), CommonLists.<String> elementAt(3));
 	}
 
-	private AbstractFunction<List<String>, MeasuredData> parseIntoMeasuredData() {
+	private Function<List<String>, MeasuredData> parseIntoMeasuredData() {
 		return new AbstractFunction<List<String>, MeasuredData>() {
 
 			public MeasuredData apply(List<String> line) {
@@ -91,5 +95,11 @@ public class RethinkingConsumptions {
 				return new MeasuredData(measuringDeviceId, pointOfTime, value, measuringType);
 			}
 		};
+	}
+
+	private void printIterable(Iterable<?> iterable) {
+		for (Object o : iterable) {
+			System.out.println(o);
+		}
 	}
 }
