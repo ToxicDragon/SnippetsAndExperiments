@@ -4,7 +4,6 @@ import static com.google.common.base.Functions.compose;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static de.composition.functional.Comparison.invert;
-import static de.composition.functional.Functions.asArrayList;
 import static de.composition.functional.Functions.curriedMap;
 import static de.composition.functional.Functions.foldLeft;
 import static de.composition.functional.examples.ExampleFunctions.add;
@@ -158,7 +157,7 @@ public class FunctionsTest {
 
 	@Test
 	public void curriedMap_whichReturnsAnArrayList() throws Exception {
-		Function<Iterable<Integer>, List<Integer>> add2Mapping = curriedMap(add(2), asArrayList());
+		Function<Iterable<Integer>, List<Integer>> add2Mapping = curriedMap(add(2), IterablesFunctions.<Integer>asArrayList());
 		assertEquals(newArrayList(2, 3, 4, 5), add2Mapping.apply(newArrayList(0, 1, 2, 3)));
 	}
 

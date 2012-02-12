@@ -3,6 +3,7 @@ package de.composition.functional;
 import static com.google.common.base.Functions.compose;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public class Comparison {
 
@@ -25,6 +26,33 @@ public class Comparison {
 
 			public int compareTo(T o) {
 				return input.compareTo(o) * -1;
+			}
+		};
+	}
+
+	public static <T extends Comparable<T>> Predicate<T> isGreaterThan(final T comparedTo) {
+		return new Predicate<T>() {
+
+			public boolean apply(T input) {
+				return input.compareTo(comparedTo) > 0;
+			}
+		};
+	}
+
+	public static <T extends Comparable<T>> Predicate<T> isLessThan(final T comparedTo) {
+		return new Predicate<T>() {
+
+			public boolean apply(T input) {
+				return input.compareTo(comparedTo) < 0;
+			}
+		};
+	}
+
+	public static <T extends Comparable<T>> Predicate<T> isEqualTp(final T comparedTo) {
+		return new Predicate<T>() {
+
+			public boolean apply(T input) {
+				return input.compareTo(comparedTo) == 0;
 			}
 		};
 	}

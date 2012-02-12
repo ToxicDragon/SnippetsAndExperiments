@@ -3,7 +3,6 @@ package de.composition.functional;
 import static com.google.common.base.Functions.compose;
 import static com.google.common.collect.Lists.newArrayList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -62,19 +61,6 @@ public class Functions {
 		};
 	}
 	
-	/**
-	 * Converts an {@link Iterable} into an {@link ArrayList}
-	 * @return
-	 */
-	public static Function<Iterable<Integer>, List<Integer>> asArrayList() {
-		return new Function<Iterable<Integer>, List<Integer>>() {
-
-			public List<Integer> apply(Iterable<Integer> input) {
-				return newArrayList(input);
-			}
-		};
-	}
-
 	private static <A> Function<A, Function<Iterable<A>, Iterable<A>>> addElement() {
 		return curry(new Function2<A, Iterable<A>, Iterable<A>>() {
 
