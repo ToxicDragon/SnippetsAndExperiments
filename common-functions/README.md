@@ -6,6 +6,6 @@ The code snippets might not be of any real world use. It's mainly intended to be
 
 ------
 
-The code makes heavy use of the [guava][1] library. The guava guys stronly recommend not to overstress a functional style when writing java code. So this project is a very abusive example of using guava.
+The code makes heavy use of the [guava][1] library. The guava guys strongly recommend not to overstress a functional style when writing java code. So this project is a very abusive example of using guava.
 
 [1]: http://code.google.com/p/guava-libraries/
