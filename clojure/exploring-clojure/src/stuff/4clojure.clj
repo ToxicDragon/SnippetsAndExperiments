@@ -142,6 +142,9 @@
 ; more concise
 #(= 2 (count (frequencies %&)))
 
+;even shorter
+#(= 2 (count (set %&)))
+
 ;86 happy numbers
 ; ok this is really ugly! what was i thinking? :)
 (fn [i] 
