@@ -10,7 +10,7 @@ Simple wrapper around java.util.ResourceBundle and java.text.MessageFormat.
 ;my.message.key=message with '{0}', '{1}' and '{2}' as arguments
 ;
 
-(def resource (load-resource "MyResource" (locale "de")))
+(def resource (load-resource "MyResource" (Locale. "de")))
 
 (resource "my.message.key" "some" "format" "arguments")
 ; message with 'some', 'format' and 'arguments' as arguments
