@@ -3,19 +3,16 @@ package de.composition.functional.examples.gp;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Lists.charactersOf;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.Test;
-
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Multimaps;
@@ -29,42 +26,12 @@ import de.composition.functional.IterablesFunctions;
 /**
  * Tutorial code to introduce some guava library features emphasizing functional
  * aspects of the library.
- * 
- * Anagram Finder - Problem 77 at http://www.4clojure.com
- * <p/>
- * Here we try to implement a similar (functional!) solution in java using
- * guava.
- * <p/>
- * Write a function which finds all the anagrams in a vector of words. A word x
- * is an anagram of word y if all the letters in x can be rearranged in a
- * different order to form y. Your function should return a set of sets, where
- * each sub-set is a group of words which are anagrams of each other. Each
- * sub-set should have at least two words. Words without any anagrams should not
- * be included in the result.
- * 
- * <p/>
- * clojure solution:
- * 
- * <pre>
- * <code>
- * (fn [words] (->> words (group-by sort) vals (map set) (filter #(> (count %) 1)) set))
- * </code>
- * </pre>
  */
 public class AnagramFinder {
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void findAnagrams() {
-		ArrayList<String> words = newArrayList("meat", "mat", "team", "mate", "eat", "tea");
+	public static Set<Set<String>> findAnagrams(List<String> words) {
+		Preconditions.checkArgument(words != null, "words must not be null.");
 
-		Set<Set<String>> anagramsSet = findAnagrams(words);
-		// Set<Set<String>> anagramsSet = findAnagrams_allInlined(words);
-
-		assertEquals(newHashSet(newHashSet("meat", "team", "mate"), newHashSet("eat", "tea")), anagramsSet);
-	}
-
-	private Set<Set<String>> findAnagrams(ArrayList<String> words) {
 		/*
 		 * As seen in the clojure solution above this could all be nicely
 		 * arranged in an inline style. But as this aims at people not familiar
@@ -78,7 +45,9 @@ public class AnagramFinder {
 		return newHashSet(singleEntryGroupsDropped);
 	}
 
-	private Set<Set<String>> findAnagrams_allInlined(ArrayList<String> words) {
+	public static Set<Set<String>> findAnagrams_allInlined(List<String> words) {
+		Preconditions.checkArgument(words != null, "words must not be null.");
+
 		/*
 		 * The inlined version removes a lot of the generics clutter and looks
 		 * much more concise but may at the same time be hard to read and
@@ -90,7 +59,7 @@ public class AnagramFinder {
 				onlyMultiples()));
 	}
 
-	private <E> Map<E, Collection<E>> groupBy(Iterable<E> iterable, Function<E, E> keyFunction) {
+	private static <E> Map<E, Collection<E>> groupBy(Iterable<E> iterable, Function<E, E> keyFunction) {
 		/*
 		 * we return a plain old Map here because the value function of MultiMap
 		 * returns a flat collection of all values instead of a collection of
@@ -99,7 +68,7 @@ public class AnagramFinder {
 		return Multimaps.index(iterable, keyFunction).asMap();
 	}
 
-	private Function<String, String> charactersSorted() {
+	private static Function<String, String> charactersSorted() {
 		return new Function<String, String>() {
 
 			public String apply(String input) {
@@ -124,7 +93,7 @@ public class AnagramFinder {
 		};
 	}
 
-	private Predicate<Set<String>> onlyMultiples() {
+	private static Predicate<Set<String>> onlyMultiples() {
 		return onlyMultiplesByComposition();
 		// return onlyMultiplesByDirectImplementation();
 	}
@@ -133,11 +102,11 @@ public class AnagramFinder {
 	 * Demonstrates how very simple and generic functions can be composed into
 	 * more complex ones.
 	 */
-	private Predicate<Set<String>> onlyMultiplesByComposition() {
+	private static Predicate<Set<String>> onlyMultiplesByComposition() {
 		return Predicates.compose(Comparison.isGreaterThan(1), CollectionFunctions.<Set<String>> size());
 	}
 
-	private Predicate<Set<String>> onlyMultiplesByDirectImplementation() {
+	private static Predicate<Set<String>> onlyMultiplesByDirectImplementation() {
 		return new Predicate<Set<String>>() {
 
 			public boolean apply(Set<String> input) {
